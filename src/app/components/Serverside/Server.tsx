@@ -3,7 +3,7 @@ import React from 'react'
 
 type Data = {
     id: number
-    name: number
+    name: string
     type: string
     available: boolean
 }
