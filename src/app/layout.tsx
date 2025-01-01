@@ -1,6 +1,13 @@
+
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Ysabeau_SC } from "next/font/google";
+
+const roboto = Ysabeau_SC({
+  weight: ['400'],
+  subsets: ['latin'],
+})
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased ${roboto.className}  bg-gradient-to-r from-sky-100 to-pink-100 ...`}
       >
         {children}
       </body>
