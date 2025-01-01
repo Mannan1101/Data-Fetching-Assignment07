@@ -12,9 +12,16 @@ export default function Server() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const url = await fetch("https://simple-books-api.glitch.me/books/");
-            const data: Data[] = await url.json();
-            setData(data);
+            try {
+                const response = await fetch("https://simple-books-api.glitch.me/books/");
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data: Data[] = await response.json();
+                setData(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
         };
         fetchData();
     }, []);
@@ -45,9 +52,7 @@ export default function Server() {
                             {todo.available ? 'Available' : 'Unavailable'}
                         </h1>
                         <h1
-                            className={`text-right ${
-                                todo.available ? 'text-violet-800' : 'text-[red]'
-                            }`}
+                            className={`text-right ${todo.available ? 'text-violet-800' : 'text-[red]'}`}
                         >
                             Read more...
                         </h1>
