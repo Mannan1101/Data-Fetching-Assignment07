@@ -9,22 +9,48 @@ type Data = {
 
 export default function Server() {
     const [data, setData] = useState<Data[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null); // Added to handle errors gracefully.
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await fetch("https://simple-books-api.glitch.me/books/");
                 if (!response.ok) {
-                    throw new Error('Failed to fetch data');
+                    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
                 }
-                const data: Data[] = await response.json();
-                setData(data);
-            } catch (error) {
+                const responseData = await response.json();
+                
+                // Ensure response data is an array
+                if (!Array.isArray(responseData)) {
+                    throw new Error('API response is not an array.');
+                }
+                
+                setData(responseData); // Update state
+            } catch (error: any) {
                 console.error("Error fetching data:", error);
+                setErrorMessage(error.message); // Update error state
             }
         };
+
         fetchData();
     }, []);
+
+    // Handle loading and error states
+    if (errorMessage) {
+        return (
+            <div className='text-center text-red-600 font-bold'>
+                <h1>Error: {errorMessage}</h1>
+            </div>
+        );
+    }
+
+    if (data.length === 0) {
+        return (
+            <div className='text-center text-gray-600 font-bold'>
+                <h1>Loading data, please wait...</h1>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -32,27 +58,27 @@ export default function Server() {
                 SERVER SIDE DATA FETCHING
             </h1>
             <div className='p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-7'>
-                {data.map((todo) => (
+                {data.map((item) => (
                     <div
-                        key={todo.id}
+                        key={item.id}
                         className='bg-white w-full h-[230px] p-4 grid gap-2 rounded-xl shadow-xl hover:shadow-2xl hover:scale-[1.05] transition'
                     >
-                        <h1 className='text-[23px] font-bold text-yellow-600 mb-2'>{todo.name}</h1>
+                        <h1 className='text-[23px] font-bold text-yellow-600 mb-2'>{item.name}</h1>
                         <h1 className='text-gray-500 text-[18px] font-bold'>
-                            ID: <span className='font-semibold'>{todo.id}</span>
+                            ID: <span className='font-semibold'>{item.id}</span>
                         </h1>
                         <h1 className='text-gray-500 text-[18px] font-bold'>
-                            Type: <span className='font-semibold'>{todo.type}</span>
+                            Type: <span className='font-semibold'>{item.type}</span>
                         </h1>
                         <h1
                             className={`${
-                                todo.available ? 'text-[green]' : 'text-[red]'
+                                item.available ? 'text-[green]' : 'text-[red]'
                             } font-bold`}
                         >
-                            {todo.available ? 'Available' : 'Unavailable'}
+                            {item.available ? 'Available' : 'Unavailable'}
                         </h1>
                         <h1
-                            className={`text-right ${todo.available ? 'text-violet-800' : 'text-[red]'}`}
+                            className={`text-right ${item.available ? 'text-violet-800' : 'text-[red]'}`}
                         >
                             Read more...
                         </h1>
