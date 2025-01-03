@@ -28,7 +28,7 @@ export default function Server() {
                 }
                 
                 setData(responseData); // Update state
-            } catch (error: any) {
+            } catch (error: string) {
                 console.error("Error fetching data:", error);
                 setErrorMessage(error.message); // Update error state
             }
